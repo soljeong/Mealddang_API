@@ -13,8 +13,8 @@ def index():
 async def index():
     session = SessionLocal()
     with engine.connect() as conn:
-        # statement = text("""SELECT * FROM md_yolo_result""")
-        statement = text("""SELECT COUNT(*) FROM md_nut_info""")
+        statement = text("""SELECT COUNT(*) FROM md_yolo_result""")
+        # statement = text("""SELECT COUNT(*) FROM md_nut_info""")
         result = conn.execute(statement)
         data = result.mappings().all()
         # data = result.mappings().first()

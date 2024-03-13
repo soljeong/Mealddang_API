@@ -7,22 +7,21 @@ import os
 import cv2
 import subprocess
 
-# 현재 날짜 가져오기
-today = datetime.now().strftime("%Y%m%d")
-c = conf()
-parent_path = os.path.dirname(c.BASE_DIR) # /app
-
-device = DEVICE
-yolo_path = os.path.join(parent_path, YOLO_PY_PATH)
-cfg_path = os.path.join(parent_path, CFG_PATH)
-pt_path = os.path.join(parent_path, PT_PATH)
-class_path = os.path.join(parent_path, CLASS_PATH)
-output_dir = os.path.join(parent_path, OUTPU_DIR)
-save_dir = os.path.join(parent_path, SAVE_DIR)
-conf_thres = CONF_THRES
-
 # async def predict(file: UploadFile = File(...)):
 async def predict(img_path: str):
+    # 경로 설정
+    c = conf()
+    parent_path = os.path.dirname(c.BASE_DIR) # /app
+
+    device = DEVICE
+    yolo_path = os.path.join(parent_path, YOLO_PY_PATH)
+    cfg_path = os.path.join(parent_path, CFG_PATH)
+    pt_path = os.path.join(parent_path, PT_PATH)
+    class_path = os.path.join(parent_path, CLASS_PATH)
+    output_dir = os.path.join(parent_path, OUTPU_DIR)
+    save_dir = os.path.join(parent_path, SAVE_DIR)
+    conf_thres = CONF_THRES
+
     # 업로드 이미지명
     filename = img_path.split("/")[-1]
     # 원본이미지, 결과 저장 폴더 생성
