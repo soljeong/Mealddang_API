@@ -84,7 +84,7 @@ def detect(save_img=False):
         import onnx
         model = onnx.load(f)  # Load the ONNX model
         onnx.checker.check_model(model)  # Check that the IR is well formed
-        print(onnx.helper.printable_graph(model.graph))  # Print a human readable representation of the graph
+        # print(onnx.helper.printable_graph(model.graph))  # Print a human readable representation of the graph
         return
 
     # Half precision
@@ -224,7 +224,7 @@ def detect(save_img=False):
                         h = int(str(total[i][3])) - int(str(total[i][1]))
 
                         data["result"].append({
-                            "class": object_names[i],
+                            "label": object_names[i],
                             "conf": object_conf[i],
                             "x": x,
                             "y": y,
@@ -276,7 +276,7 @@ def detect(save_img=False):
                     cv2.imwrite(file_name_without_ext + f"_{class_name}" + ".jpg", cropped_image)
 
             # Print time (inference + NMS)
-            print('%s (%.3fs)' % (s, t2 - t1))
+            # print('%s (%.3fs)' % (s, t2 - t1))
 
             # Stream results
             if view_img:
@@ -285,19 +285,19 @@ def detect(save_img=False):
                     raise StopIteration
 
     if save_txt or save_img:
-        print('Results saved to %s' % os.getcwd() + os.sep + out)
+        # print('Results saved to %s' % os.getcwd() + os.sep + out)
         if platform == 'darwin':  # MacOS
             os.system('open ' + save_path)
 
-    print('Done. (%.3fs)' % (time.time() - t0))
+    # print('Done. (%.3fs)' % (time.time() - t0))
     tot = nT + nF + nND
     accu = nT / tot
-    print('Number of Detected Objects: {0}, True: {1}, False: {2}, Not Detected: {3}, Accuracy: {4}'.format(tot, nT, nF, nND, accu)) 
+    # print('Number of Detected Objects: {0}, True: {1}, False: {2}, Not Detected: {3}, Accuracy: {4}'.format(tot, nT, nF, nND, accu)) 
     with open('./classificaion_result.txt','w') as f:
         rslt = [r + '\n' for r in rslt]
         f.writelines(rslt)
-    print('Images saved to %s' % save_img)
-    print('Done. (%.3fs)' % (time.time() - t0))
+    # print('Images saved to %s' % save_img)
+    # print('Done. (%.3fs)' % (time.time() - t0))
 
     return data
 

@@ -1,8 +1,8 @@
 from datetime import datetime
 
 DB_USERNAME = "mealddang"
-DB_PASSWORD = ""
-DB_HOST = "localhost"
+DB_PASSWORD = "alfEkd!!!"
+DB_HOST = "3.38.213.167"
 DB_PORT = 3306
 DB_NAME = "mealddang"
 

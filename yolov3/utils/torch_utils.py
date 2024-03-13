@@ -39,7 +39,8 @@ def select_device(device='', apex=False, batch_size=None):
             print("%sdevice%g _CudaDeviceProperties(name='%s', total_memory=%dMB)" %
                   (s, i, x[i].name, x[i].total_memory / c))
     else:
-        print('Using CPU')
+        # print('Using CPU')
+        print('')
 
     print('')  # skip a line
     return torch.device('cuda:0' if cuda else 'cpu')
@@ -112,7 +113,8 @@ def model_info(model, verbose=False):
     except:
         fs = ''
 
-    print('Model Summary: %g layers, %g parameters, %g gradients%s' % (len(list(model.parameters())), n_p, n_g, fs))
+    # print('Model Summary: %g layers, %g parameters, %g gradients%s' % (len(list(model.parameters())), n_p, n_g, fs))
+    print('')
 
 
 def load_classifier(name='resnet101', n=2):
