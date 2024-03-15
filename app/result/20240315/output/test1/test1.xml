@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<annotation>
+  <folder>C:\Users\Playdata\dev\github\Mealddang_API\app\result\20240315\output\test1</folder>
+  <filename>C:\Users\Playdata\dev\github\Mealddang_API\app\result\20240315\source\test1\test1.jpg</filename>
+  <path>C:\Users\Playdata\dev\github\Mealddang_API\app\result\20240315\output\test1\test1.jpg</path>
+  <object>
+    <name>01012001</name>
+    <conf>0.43</conf>
+    <bndbox>
+      <xmin>69</xmin>
+      <ymin>27</ymin>
+      <xmax>536</xmax>
+      <ymax>402</ymax>
+    </bndbox>
+  </object>
+</annotation>

@@ -1,12 +1,12 @@
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from app.common.config import conf
+# from sqlalchemy import create_engine
+# from sqlalchemy.ext.declarative import declarative_base
+# from sqlalchemy.orm import sessionmaker
+# from app.common.config import conf
 
-c = conf()
-engine = create_engine(c.DB_URL, future=True)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
+# c = conf()
+# engine = create_engine(c.DB_URL, future=True)
+# SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+# Base = declarative_base()
 
 # from fastapi import FastAPI
 # from sqlalchemy import create_engine

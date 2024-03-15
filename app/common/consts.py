@@ -1,10 +1,10 @@
 from datetime import datetime
 
-DB_USERNAME = ""
-DB_PASSWORD = ""
-DB_HOST = ""
-DB_PORT = 0000
-DB_NAME = ""
+DB_USERNAME = "mealddang"
+DB_PASSWORD = "alfEkd!!!"
+DB_HOST = "3.38.213.167"
+DB_PORT = 3306
+DB_NAME = "mealddang"
 
 TODAY = datetime.now().strftime("%Y%m%d")
 DEVICE = "cpu"

@@ -272,8 +272,8 @@ def detect(save_img=False):
                     # cv2.destroyAllWindows()
 
                     # 자른 이미지 저장
-                    file_name_without_ext = os.path.splitext(save_path)[0]
-                    cv2.imwrite(file_name_without_ext + f"_{class_name}" + ".jpg", cropped_image)
+                    # file_name_without_ext = os.path.splitext(save_path)[0]
+                    # cv2.imwrite(file_name_without_ext + f"_{class_name}" + ".jpg", cropped_image)
 
             # Print time (inference + NMS)
             # print('%s (%.3fs)' % (s, t2 - t1))
