@@ -1,6 +1,7 @@
 __pycache__/
 .venv
 app/weights
+app/result
 
 *.jpg
 *.jpeg
