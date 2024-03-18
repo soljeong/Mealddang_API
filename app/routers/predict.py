@@ -1,12 +1,16 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Request
 from app.service.yoloService import *
 from app.service.fileService import *
 
 router = APIRouter()
 
+# if not ALLOWED_HOSTS:
+#     ALLOWED_HOSTS = ["*"]
+
 # @router.post("/predict")
 @router.post("/predict")
 async def post_predict(file: UploadFile = File(...)):
+
     return await YoloService().service_yolo(file)
 
 @router.get("/download/{filename}")

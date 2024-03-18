@@ -57,7 +57,8 @@ class YoloService:
         print(result.returncode)
 
         # Yolo 결과 정제
-        rst_list = []
+        response_rst = {}
+        result_yolo = []
         if result.returncode == 0:
             # json 에서 줄바꿈 삭제
             json_str = str(result.stdout).replace("\n", "").replace("\'","\"")
@@ -101,13 +102,14 @@ class YoloService:
                 # encoded = base64.b64encode(imgByteArr)
                 # # Base64로 ascii로 디코딩
                 # decoded = encoded.decode('ascii')
+                result_yolo.append(crop_output_name)
 
-                rst_list.append(crop_output_name)
-
-        # else:
-        #     rst_list
-        
-        return JSONResponse(rst_list)
+            # else:
+            #     rst_list
+        # 딕셔너리를 JSON 문자열로 변환
+        response_rst["images"] = result_yolo
+        json_str = json.dumps(response_rst)
+        return JSONResponse(json_str)
     
     def crop_img(img, save_path: str, output_path: str):
         label = img["label"]
