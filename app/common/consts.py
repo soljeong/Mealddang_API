@@ -14,4 +14,4 @@ PT_PATH = "yolov3/weights/best_md_403.pt"
 CLASS_PATH = "yolov3/data/best_md_403_cls.names"
 OUTPU_DIR = f"app/result/{TODAY}/output"
 SAVE_DIR = f"app/result/{TODAY}/source"
-CONF_THRES = 0.4
+CONF_THRES = 0.01

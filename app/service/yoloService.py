@@ -2,7 +2,8 @@ from fastapi import File, UploadFile
 from fastapi.responses import JSONResponse
 from app.common.consts import DEVICE, YOLO_PY_PATH, CFG_PATH, PT_PATH, CLASS_PATH, OUTPU_DIR, SAVE_DIR, CONF_THRES
 from app.common.config import conf
-from PIL import Image
+from PIL import Image, ImageOps
+import numpy as np
 import subprocess
 import base64
 import json
@@ -37,15 +38,21 @@ class YoloService:
         os.makedirs(save_path, exist_ok=True)
         os.makedirs(output_path, exist_ok=True)
 
+        print("output_path===>" + output_path)
+
         # 업로드 이미지 읽기
         content = await file.read()
+        print(type(content))
 
         # 업로드 이미지 저장할 로컬 경로
         srcFile = os.path.join(save_path, filename)
 
         # 업로드 이미지 저장
-        with open(srcFile, "wb") as f:
-            f.write(content)
+        # with open(srcFile, "wb") as f:
+        #     f.write(content)
+
+        print(type(srcFile))
+        srcFile = resize_image(content, srcFile)
 
         # Yolo CMD
         command = f"python {yolo_path} --cfg {cfg_path} --names {class_path} --weights {pt_path} --device {device} --source {srcFile} --output {output_path} --save-xml --conf-thres {conf_thres}"
@@ -62,76 +69,70 @@ class YoloService:
         if result.returncode == 0:
             # json 에서 줄바꿈 삭제
             json_str = str(result.stdout).replace("\n", "").replace("\'","\"")
+            print("json_str =======> " + json_str)
             # json 형태로 변환
             json_data = json.loads(json_str)
             # result 리스트 가져오기
             result_list = list(json_data["result"])
 
+            print("추출 결과 갯수 =====> " + str(len(result_list)))
             for i in result_list:
-                label = i["label"]
-                conf = i["conf"]
-                x = i["x"]
-                y = i["y"]
-                w = i["w"]
-                h = i["h"]
-
-                # 원본 이미지 가져와서 관심 영역 자르기
-                image = cv2.imread(srcFile)
-                cropped_image = image[y:y+h, x:x+w]
-
-                # 자른 이미지 보기
-                # cv2.imshow('Cropped Image', cropped_image)
-                # cv2.waitKey(0)
-                # cv2.destroyAllWindows()
-
-                # 자른 이미지 저장
-                foldername = filename.split(".")[0]
-                conf_int = str(conf).split(".")[-1]
-                crop_output_name = f"{foldername}_{label}_{x}_{y}_{w}_{h}_{conf_int}" + ".jpg"
-                print("output_path===>" + output_path)
-                crop_output_path = os.path.join(output_path, crop_output_name)
-                print("crop_output_path ===> " + crop_output_path)
-                cv2.imwrite(crop_output_path, cropped_image)
-
-                # img = Image.open(crop_output_path)
-                # # Pillow 이미지 객체를 Bytes로 변환
-                # imgByteArr = io.BytesIO()
-                # img.save(imgByteArr, format=img.format)
-                # imgByteArr = imgByteArr.getvalue()
-                # # Base64로 Bytes를 인코딩
-                # encoded = base64.b64encode(imgByteArr)
-                # # Base64로 ascii로 디코딩
-                # decoded = encoded.decode('ascii')
+                crop_output_name = crop_img(i, srcFile, output_path, filename)
                 result_yolo.append(crop_output_name)
 
             # else:
             #     rst_list
+        result_yolo_distinct = list(set(result_yolo))
         # 딕셔너리를 JSON 문자열로 변환
-        response_rst["images"] = result_yolo
+        response_rst["images"] = result_yolo_distinct
         json_str = json.dumps(response_rst)
+        print("result json_str =======> " + json_str)
         return JSONResponse(json_str)
     
-    def crop_img(img, save_path: str, output_path: str):
-        label = img["label"]
-        conf = img["conf"]
-        x = img["x"]
-        y = img["y"]
-        w = img["w"]
-        h = img["h"]
+def crop_img(img, srcFile: str, output_path: str, filename: str):
+    label = img["label"]
+    conf = img["conf"]
+    x = img["x"]
+    y = img["y"]
+    w = img["w"]
+    h = img["h"]
 
-        # 원본 이미지 가져와서 관심 영역 자르기
-        image = cv2.imread(save_path)
-        cropped_image = image[y:y+h, x:x+w]
+    # 원본 이미지 가져와서 관심 영역 자르기
+    image = cv2.imread(srcFile)
+    cropped_image = image[y:y+h, x:x+w]
 
-        # 자른 이미지 보기
-        # cv2.imshow('Cropped Image', cropped_image)
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
+    # 자른 이미지 보기
+    # cv2.imshow('Cropped Image', cropped_image)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
 
-        # 자른 이미지 저장
-        foldername = os.path.splitext(output_path)[-1]
-        crop_output_name = f"/{foldername}_{label}_{x}_{y}_{w}_{h}_{conf}" + ".jpg"
-        crop_output_path = os.path.join(save_path, crop_output_name)
-        crop_result_img = cv2.imwrite(crop_output_path, cropped_image)
+    # 자른 이미지 저장
+    foldername = filename.split(".")[0]
+    conf_int = str(conf).split(".")[-1]
+    crop_output_name = f"{foldername}_{label}_{x}_{y}_{w}_{h}_{conf_int}" + ".jpg"
+    crop_output_path = os.path.join(output_path, crop_output_name)
+    print("crop_output_path ===> " + crop_output_path)
+    cv2.imwrite(crop_output_path, cropped_image)
 
-        return crop_result_img
+    return crop_output_name
+
+def resize_image(content, srcFile: str):
+    # byte로 읽어들인 이미지를 numpy 배열로 변환
+    nparr = np.frombuffer(content, np.uint8)
+
+    # numpy 배열을 OpenCV 이미지로 변환
+    image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+
+    # 원하는 크기로 이미지 크기 조절
+    new_width, new_height = 1024, 1024
+    resized_image = cv2.resize(image, (new_width, new_height))
+
+    # 조절된 이미지를 byte로 변환
+    success, encoded_image = cv2.imencode('.jpg', resized_image)
+    resized_image_bytes = encoded_image.tobytes()
+
+    # byte를 파일로 저장하거나 다른 용도로 사용 가능
+    with open(srcFile, "wb") as f:
+        f.write(resized_image_bytes)
+    
+    return srcFile
